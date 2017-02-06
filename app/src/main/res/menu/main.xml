@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="По возрастанию имени"  android:id="@+id/name_ascending"/>
+    <item android:title="По убыванию имени" android:id="@+id/name_descending"/>
+    <item android:title="По возрастанию даты" android:id="@+id/date_ascending"/>
+    <item android:title="По убыванию даты" android:id="@+id/date_descending"/>
+</menu>
