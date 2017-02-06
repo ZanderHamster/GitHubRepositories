@@ -182,23 +182,27 @@ public class SearchActivity extends AppCompatActivity {
                 }
 
                 Date currentTime = Calendar.getInstance().getTime();
-                for (int i = 0; i < dataJsonObj.length(); i++) {
-                    Repositories repositories = new Repositories();
+                if(!dataJsonObj.getJSONObject(0).getString("name").isEmpty()) {
+                    for (int i = 0; i < dataJsonObj.length(); i++) {
+                        Repositories repositories = new Repositories();
 
-                    String owner=dataJsonObj.getJSONObject(i).getJSONObject("owner").getString("id");
-                    if (owner.equals(userId)) repositories.setName(dataJsonObj.getJSONObject(i).getString("name"));
-                    else repositories.setName(dataJsonObj.getJSONObject(i).getString("full_name"));
-                    repositories.setDescription(dataJsonObj.getJSONObject(i).getString("description"));
-                    repositories.setCreated_at(format.parse(dataJsonObj.getJSONObject(i).getString("created_at")));
-                    repositories.setUpdated_at(format.parse(dataJsonObj.getJSONObject(i).getString("updated_at")));
-                    repositories.setLanguage(dataJsonObj.getJSONObject(i).getString("language"));
-                    repositories.setStargazers_count(Integer.valueOf(dataJsonObj.getJSONObject(i).getString("stargazers_count")));
-                    repositories.setRequest_time(currentTime);
-                    repositories.setUser_name(userName);
-                    repositories.setOwner_type(ownerType);
-                    repositories.save();
+
+                        String owner = dataJsonObj.getJSONObject(i).getJSONObject("owner").getString("id");
+                        if (owner.equals(userId))
+                            repositories.setName(dataJsonObj.getJSONObject(i).getString("name"));
+                        else
+                            repositories.setName(dataJsonObj.getJSONObject(i).getString("full_name"));
+                        repositories.setDescription(dataJsonObj.getJSONObject(i).getString("description"));
+                        repositories.setCreated_at(format.parse(dataJsonObj.getJSONObject(i).getString("created_at")));
+                        repositories.setUpdated_at(format.parse(dataJsonObj.getJSONObject(i).getString("updated_at")));
+                        repositories.setLanguage(dataJsonObj.getJSONObject(i).getString("language"));
+                        repositories.setStargazers_count(Integer.valueOf(dataJsonObj.getJSONObject(i).getString("stargazers_count")));
+                        repositories.setRequest_time(currentTime);
+                        repositories.setUser_name(userName);
+                        repositories.setOwner_type(ownerType);
+                        repositories.save();
+                    }
                 }
-
                 Intent intent = new Intent(getBaseContext(),ResultActivity.class);
                 intent.putExtra("userName",userName);
                 intent.putExtra("ownerType",ownerType);
