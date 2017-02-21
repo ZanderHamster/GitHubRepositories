@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -18,9 +19,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class ResultActivity extends AppCompatActivity{
+public class ResultActivity extends AppCompatActivity {
     private List<Repositories> repositoriesList;
     private RecyclerView recyclerView;
+    private String userName;
+    private String ownerType;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,76 +34,98 @@ public class ResultActivity extends AppCompatActivity{
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        String userName = intent.getStringExtra("userName");
-        String ownerType= intent.getStringExtra("ownerType");
+        userName = intent.getStringExtra("userName");
+        ownerType = intent.getStringExtra("ownerType");
 
         recyclerView = (RecyclerView) findViewById(R.id.rvRepositories);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        repositoriesList = new Select().from(Repositories.class).where(Repositories_Table.user_name.is(userName),Repositories_Table.owner_type.is(ownerType)).queryList();
+        repositoriesList = new Select()
+                .from(Repositories.class)
+                .where(Repositories_Table.user_name.is(userName), Repositories_Table.owner_type.is(ownerType))
+                .queryList();
         ListRepositories adapter = new ListRepositories(repositoriesList);
         recyclerView.setAdapter(adapter);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        getMenuInflater().inflate(R.menu.main,menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent = new Intent(this,SearchActivity.class);
+                Intent intent = new Intent(this, SearchActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.name_ascending:
-                Collections.sort(repositoriesList,ResultActivity.nameAscending);
+                nameAscending();
                 recyclerView.getAdapter().notifyDataSetChanged();
                 break;
             case R.id.name_descending:
-                Collections.sort(repositoriesList,ResultActivity.nameDescending);
+                nameDescending();
                 recyclerView.getAdapter().notifyDataSetChanged();
                 break;
             case R.id.date_ascending:
-                Collections.sort(repositoriesList,ResultActivity.dateAscending);
+                dateAscending();
                 recyclerView.getAdapter().notifyDataSetChanged();
                 break;
             case R.id.date_descending:
-                Collections.sort(repositoriesList,ResultActivity.dateDescending);
+                dateDescending();
                 recyclerView.getAdapter().notifyDataSetChanged();
                 break;
         }
         return true;
     }
 
-    public static Comparator<Repositories> dateDescending = new Comparator<Repositories>() {
-        @Override
-        public int compare(Repositories repositories, Repositories t1) {
-            return repositories.getCreated_at().compareTo(t1.getCreated_at());
+    public void nameDescending(){
+        if(!TextUtils.isEmpty(ownerType)&&!TextUtils.isEmpty(userName)){
+            repositoriesList = new Select()
+                    .from(Repositories.class)
+                    .where(Repositories_Table.user_name.is(userName), Repositories_Table.owner_type.is(ownerType))
+                    .orderBy(Repositories_Table.name,false)
+                    .queryList();
+            ListRepositories adapter = new ListRepositories(repositoriesList);
+            recyclerView.swapAdapter(adapter,true);
         }
-    };
+    }
 
-    public static Comparator<Repositories> dateAscending = new Comparator<Repositories>() {
-        @Override
-        public int compare(Repositories repositories, Repositories t1) {
-            return t1.getCreated_at().compareTo(repositories.getCreated_at());
+    public void nameAscending(){
+        if(!TextUtils.isEmpty(ownerType)&&!TextUtils.isEmpty(userName)){
+            repositoriesList = new Select()
+                    .from(Repositories.class)
+                    .where(Repositories_Table.user_name.is(userName), Repositories_Table.owner_type.is(ownerType))
+                    .orderBy(Repositories_Table.name,true)
+                    .queryList();
+            ListRepositories adapter = new ListRepositories(repositoriesList);
+            recyclerView.swapAdapter(adapter,true);
         }
-    };
-    public static Comparator<Repositories> nameAscending = new Comparator<Repositories>() {
-        @Override
-        public int compare(Repositories repositories, Repositories t1) {
-            return repositories.getName().compareTo(t1.getName());
+    }
+
+    public void dateAscending(){
+        if(!TextUtils.isEmpty(ownerType)&&!TextUtils.isEmpty(userName)){
+            repositoriesList = new Select()
+                    .from(Repositories.class)
+                    .where(Repositories_Table.user_name.is(userName), Repositories_Table.owner_type.is(ownerType))
+                    .orderBy(Repositories_Table.created_at,true)
+                    .queryList();
+            ListRepositories adapter = new ListRepositories(repositoriesList);
+            recyclerView.swapAdapter(adapter,true);
         }
-    };
-    public static Comparator<Repositories> nameDescending = new Comparator<Repositories>() {
-        @Override
-        public int compare(Repositories repositories, Repositories t1) {
-            return t1.getName().compareTo(repositories.getName());
+    }
+
+    public void dateDescending(){
+        if(!TextUtils.isEmpty(ownerType)&&!TextUtils.isEmpty(userName)){
+            repositoriesList = new Select()
+                    .from(Repositories.class)
+                    .where(Repositories_Table.user_name.is(userName), Repositories_Table.owner_type.is(ownerType))
+                    .orderBy(Repositories_Table.created_at,false)
+                    .queryList();
+            ListRepositories adapter = new ListRepositories(repositoriesList);
+            recyclerView.swapAdapter(adapter,true);
         }
-    };
+    }
+
 }

@@ -1,7 +1,6 @@
 package com.example.david.githubrepositories;
 
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 import com.example.david.githubrepositories.Database.Repositories;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 class ListRepositories extends RecyclerView.Adapter<ListRepositories.RepoViewHolder>{
