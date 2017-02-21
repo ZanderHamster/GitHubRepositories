@@ -12,18 +12,18 @@ import com.example.david.githubrepositories.Database.Repositories;
 
 import java.util.List;
 
-class ListHistory extends RecyclerView.Adapter<ListHistory.HistoryViewHolder>{
+class ListHistory extends RecyclerView.Adapter<ListHistory.HistoryViewHolder> {
     private List<Repositories> historyList;
     private Context context;
 
-    ListHistory(Context context, List<Repositories> historyList){
+    ListHistory(Context context, List<Repositories> historyList) {
         this.historyList = historyList;
-        this.context=context;
+        this.context = context;
     }
 
     @Override
     public HistoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.history_mapping,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.history_mapping, parent, false);
         return new HistoryViewHolder(view);
     }
 
@@ -31,15 +31,15 @@ class ListHistory extends RecyclerView.Adapter<ListHistory.HistoryViewHolder>{
     public void onBindViewHolder(HistoryViewHolder holder, final int position) {
         final Repositories historyItem = historyList.get(position);
 
-        holder.name.setText("Пользователь: "+ historyItem.getUser_name());
-        holder.type.setText("Тип: "+historyItem.getOwner_type());
+        holder.name.setText("Пользователь: " + historyItem.getUser_name());
+        holder.type.setText("Тип: " + historyItem.getOwner_type());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context,ResultActivity.class);
-                intent.putExtra("userName",historyItem.getUser_name());
-                intent.putExtra("ownerType",historyItem.getOwner_type());
+                Intent intent = new Intent(context, ResultActivity.class);
+                intent.putExtra("userName", historyItem.getUser_name());
+                intent.putExtra("ownerType", historyItem.getOwner_type());
                 context.startActivity(intent);
             }
         });
@@ -56,8 +56,8 @@ class ListHistory extends RecyclerView.Adapter<ListHistory.HistoryViewHolder>{
 
         HistoryViewHolder(View itemView) {
             super(itemView);
-            this.name= (TextView) itemView.findViewById(R.id.tv_user_name_history);
-            this.type= (TextView) itemView.findViewById(R.id.tv_owner_type_history);
+            this.name = (TextView) itemView.findViewById(R.id.tv_user_name_history);
+            this.type = (TextView) itemView.findViewById(R.id.tv_owner_type_history);
         }
     }
 }
