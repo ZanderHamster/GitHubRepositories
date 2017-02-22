@@ -12,10 +12,10 @@ import com.example.david.githubrepositories.Database.Repositories;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-class ListRepositories extends RecyclerView.Adapter<ListRepositories.RepoViewHolder>{
+public class ListRepositories extends RecyclerView.Adapter<ListRepositories.RepoViewHolder>{
     private List<Repositories> repositoriesList;
 
-    ListRepositories(List<Repositories> repositoriesList) {
+    public ListRepositories(List<Repositories> repositoriesList) {
         this.repositoriesList=repositoriesList;
     }
 

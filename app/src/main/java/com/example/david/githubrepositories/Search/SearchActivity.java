@@ -1,4 +1,4 @@
-package com.example.david.githubrepositories;
+package com.example.david.githubrepositories.Search;
 
 
 import android.content.Intent;
@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.example.david.githubrepositories.Database.Repositories;
 import com.example.david.githubrepositories.Database.Repositories_Table;
+import com.example.david.githubrepositories.ListHistory;
+import com.example.david.githubrepositories.R;
+import com.example.david.githubrepositories.Result.ResultActivity;
 import com.raizlabs.android.dbflow.sql.language.Select;
 
 import java.util.List;
@@ -46,15 +48,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView, Vie
 
     }
 
-    @Override
-    public EditText getButton() {
-        return username;
-    }
-
-    @Override
-    public Spinner getSpinner() {
-        return type;
-    }
 
     @Override
     public void setUsernameError() {
@@ -64,14 +57,15 @@ public class SearchActivity extends AppCompatActivity implements SearchView, Vie
     @Override
     public void navigateToResult() {
         Intent intent = new Intent(this, ResultActivity.class);
-        intent.putExtra("userName", username.getText());
+        intent.putExtra("userName", username.getText().toString());
         intent.putExtra("ownerType", getType(type));
         startActivity(intent);
     }
 
     @Override
     public void onClick(View v) {
-        presenter.validateCredentials();
+        navigateToResult();
+//        presenter.validateCredentials();
     }
 
     public String getType(Spinner type) {

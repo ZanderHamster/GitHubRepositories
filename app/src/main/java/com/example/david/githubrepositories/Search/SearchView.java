@@ -1,12 +1,9 @@
-package com.example.david.githubrepositories;
+package com.example.david.githubrepositories.Search;
 
 import android.widget.EditText;
 import android.widget.Spinner;
 
 public interface SearchView {
-    EditText getButton();
-
-    Spinner getSpinner();
 
     void setUsernameError();
 

@@ -9,14 +9,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.david.githubrepositories.Database.Repositories;
+import com.example.david.githubrepositories.Result.ResultActivity;
 
 import java.util.List;
 
-class ListHistory extends RecyclerView.Adapter<ListHistory.HistoryViewHolder> {
+public class ListHistory extends RecyclerView.Adapter<ListHistory.HistoryViewHolder> {
     private List<Repositories> historyList;
     private Context context;
 
-    ListHistory(Context context, List<Repositories> historyList) {
+    public ListHistory(Context context, List<Repositories> historyList) {
         this.historyList = historyList;
         this.context = context;
     }

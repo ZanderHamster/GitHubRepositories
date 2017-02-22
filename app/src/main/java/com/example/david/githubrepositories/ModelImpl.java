@@ -2,8 +2,6 @@ package com.example.david.githubrepositories;
 
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.widget.EditText;
-import android.widget.Spinner;
 
 import com.example.david.githubrepositories.Database.Repositories;
 import com.example.david.githubrepositories.Database.Repositories_Table;
@@ -26,57 +24,48 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-class SearchPresenterImpl implements SearchPresenter, SearchView.OnStartSearch {
-    private SearchView searchView;
-    private EditText username;
-    private Spinner type;
+public class ModelImpl implements Model {
+    private String username;
+    private String type;
 
-    SearchPresenterImpl(SearchView searchView) {
-        this.searchView = searchView;
-        this.username = searchView.getButton();
-        this.type = searchView.getSpinner();
+    public ModelImpl(String username, String type) {
+        this.username = username;
+        this.type = type;
     }
 
     @Override
-    public void validateCredentials() {
+    public List<Repositories> requestToGitHub() {
 
-        String userName = username.getText().toString();
-        String ownerType = "all";
-        if (String.valueOf(type.getSelectedItemPosition()).equals("1"))
-            ownerType = "owner";
-        else if (String.valueOf(type.getSelectedItemPosition()).equals("2"))
-            ownerType = "member";
-
-        if (TextUtils.isEmpty(username.getText())) onUsernameError();
-        else {
+        if (TextUtils.isEmpty(username)) {
+            return getRepositoriesList(username, type);
+        } else {
             List<Repositories> currentRequest = new Select()
                     .from(Repositories.class)
-                    .where(Repositories_Table.user_name.is(userName), Repositories_Table.owner_type.is(ownerType))
+                    .where(Repositories_Table.user_name.is(username), Repositories_Table.owner_type.is(type))
                     .queryList();
-            if (currentRequest.isEmpty())
-                new ParseRepositories().execute(userName, ownerType);
-            else {
-
+            if (currentRequest.isEmpty()) {
+                new ParseRepositories().execute(username, type);
+                return getRepositoriesList(username, type);
+            } else {
                 Date requestTime = currentRequest.get(currentRequest.size() - 1).getRequest_time();
                 Date currentTime = Calendar.getInstance().getTime();
                 long timeDiff = currentTime.getTime() - requestTime.getTime();
-                if ((timeDiff / 60000) > 5)
-                    new ParseRepositories().execute(userName, ownerType);
-                else {
-                    onSuccess();
+                if ((timeDiff / 60000) > 5) {
+                    new ParseRepositories().execute(username, type);
+                    return getRepositoriesList(username, type);
+                } else {
+                    return getRepositoriesList(username, type);
                 }
             }
         }
+
     }
 
-    @Override
-    public void onUsernameError() {
-        searchView.setUsernameError();
-    }
-
-    @Override
-    public void onSuccess() {
-        searchView.navigateToResult();
+    private List<Repositories> getRepositoriesList(String username, String type) {
+        return new Select()
+                .from(Repositories.class)
+                .where(Repositories_Table.user_name.is(username), Repositories_Table.owner_type.is(type))
+                .queryList();
     }
 
     private class ParseRepositories extends AsyncTask<String, Void, String> {
@@ -181,7 +170,6 @@ class SearchPresenterImpl implements SearchPresenter, SearchView.OnStartSearch {
                         repositories.save();
                     }
                 }
-                onSuccess();
 
             } catch (JSONException | ParseException e) {
                 e.printStackTrace();
@@ -189,5 +177,3 @@ class SearchPresenterImpl implements SearchPresenter, SearchView.OnStartSearch {
         }
     }
 }
-
-
