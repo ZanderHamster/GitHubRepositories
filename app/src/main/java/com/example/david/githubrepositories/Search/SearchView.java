@@ -9,6 +9,10 @@ public interface SearchView {
 
     void navigateToResult();
 
+    void showProgress();
+
+    void hideProgress();
+
     interface OnStartSearch {
         void onUsernameError();
 

@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.example.david.githubrepositories.Database.Repositories;
@@ -21,6 +22,7 @@ import java.util.List;
 
 public class SearchActivity extends AppCompatActivity implements SearchView, View.OnClickListener {
 
+    public ProgressBar progressBar;
     public EditText username;
     public Spinner type;
     private SearchPresenter presenter;
@@ -30,6 +32,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView, Vie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        progressBar = (ProgressBar) findViewById(R.id.progress);
         username = (EditText) findViewById(R.id.etUserName);
         type = (Spinner) findViewById(R.id.spinner);
         findViewById(R.id.bSearch).setOnClickListener(this);
@@ -63,9 +66,19 @@ public class SearchActivity extends AppCompatActivity implements SearchView, Vie
     }
 
     @Override
+    public void showProgress() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgress() {
+        progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
     public void onClick(View v) {
-        navigateToResult();
-//        presenter.validateCredentials();
+//        navigateToResult();
+        presenter.validateCredentials();
     }
 
     public String getType(Spinner type) {

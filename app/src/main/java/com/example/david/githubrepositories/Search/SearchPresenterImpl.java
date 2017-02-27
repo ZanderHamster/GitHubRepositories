@@ -11,13 +11,14 @@ class SearchPresenterImpl implements SearchPresenter, SearchView.OnStartSearch {
 
     @Override
     public void validateCredentials() {
-
-
+        searchView.showProgress();
+        searchView.navigateToResult();
     }
 
     @Override
     public void onUsernameError() {
         searchView.setUsernameError();
+        searchView.hideProgress();
     }
 
     @Override
