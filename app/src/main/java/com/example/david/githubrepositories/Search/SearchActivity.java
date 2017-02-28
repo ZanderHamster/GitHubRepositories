@@ -77,7 +77,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView, Vie
 
     @Override
     public void onClick(View v) {
-//        navigateToResult();
         presenter.validateCredentials();
     }
 

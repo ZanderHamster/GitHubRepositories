@@ -1,6 +1,5 @@
 package com.example.david.githubrepositories;
 
-import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -9,25 +8,24 @@ import com.example.david.githubrepositories.Database.Repositories_Table;
 import com.raizlabs.android.dbflow.sql.language.Method;
 import com.raizlabs.android.dbflow.sql.language.Select;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subscribers.DefaultSubscriber;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.functions.Action1;
 
 public class ModelImpl implements Model {
     private String username;
@@ -36,10 +34,14 @@ public class ModelImpl implements Model {
     public ModelImpl(String username, String type) {
         this.username = username;
         this.type = type;
+
+
     }
 
     @Override
     public List<Repositories> requestToGitHub() {
+
+
         if (TextUtils.isEmpty(username)) {
             return getRepositoriesList(username, type);
         } else {
@@ -48,22 +50,51 @@ public class ModelImpl implements Model {
                     .where(Repositories_Table.user_name.is(username), Repositories_Table.owner_type.is(type))
                     .queryList();
             if (currentRequest.isEmpty()) {
-                Call<List<Repositories>> call = GitHubService
-                        .Factory
-                        .getInstance()
-                        .getRepo(username, type);
-                makeEnqueue(call, username, type);
+                GitHubServiceImpl gitHubService = new GitHubServiceImpl();
+                Observable<List<Repositories>> data = gitHubService.getRepo(username, type)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+                data.subscribe(new Observer<List<Repositories>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d("LOG","onSubscribe");
+                    }
+
+                    @Override
+                    public void onNext(List<Repositories> repositories) {
+                        Log.d("LOG","onNext");
+                        for (int i = 0; i <repositories.size(); i++) {
+                            Log.d("LOG",repositories.get(i).getName());
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("LOG",e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("LOG","Complete");
+                    }
+                });
+
+//                Call<List<Repositories>> call = GitHubService
+//                        .Factory
+//                        .getInstance()
+//                        .getRepo(username, type);
+//                makeEnqueue(call, username, type);
                 return getRepositoriesList(username, type);
             } else {
                 Date requestTime = currentRequest.get(currentRequest.size() - 1).getRequest_time();
                 Date currentTime = Calendar.getInstance().getTime();
                 long timeDiff = currentTime.getTime() - requestTime.getTime();
                 if ((timeDiff / 60000) > 5) {
-                    Call<List<Repositories>> call = GitHubService
-                            .Factory
-                            .getInstance()
-                            .getRepo(username, type);
-                    makeEnqueue(call, username, type);
+//                    Call<List<Repositories>> call = GitHubService
+//                            .Factory
+//                            .getInstance()
+//                            .getRepo(username, type);
+//                    makeEnqueue(call, username, type);
                     return getRepositoriesList(username, type);
                 } else {
                     return getRepositoriesList(username, type);
@@ -103,7 +134,7 @@ public class ModelImpl implements Model {
 
     }
 
-    public void ClearingHistory(){
+    public void ClearingHistory() {
         List<Repositories> uniqueUsers = new Select(Repositories_Table.user_name, Repositories_Table.owner_type, Repositories_Table.request_time)
                 .distinct()
                 .from(Repositories.class)
