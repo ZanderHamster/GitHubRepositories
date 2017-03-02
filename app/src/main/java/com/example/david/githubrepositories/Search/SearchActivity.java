@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -21,11 +22,12 @@ import com.raizlabs.android.dbflow.sql.language.Select;
 import java.util.List;
 
 public class SearchActivity extends AppCompatActivity implements SearchView, View.OnClickListener {
-
     public ProgressBar progressBar;
     public EditText username;
     public Spinner type;
     private SearchPresenter presenter;
+    private  RecyclerView recyclerView;
+    private ListHistory adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,16 +40,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView, Vie
         findViewById(R.id.bSearch).setOnClickListener(this);
 
         presenter = new SearchPresenterImpl(this);
+        presenter.takeListHistory();
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_History);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        List<Repositories> historyList = new Select(Repositories_Table.user_name, Repositories_Table.owner_type, Repositories_Table.request_time)
-                .distinct()
-                .from(Repositories.class)
-                .where()
-                .queryList();
-        ListHistory adapter = new ListHistory(this, historyList);
-        recyclerView.setAdapter(adapter);
 
     }
 
@@ -66,18 +60,25 @@ public class SearchActivity extends AppCompatActivity implements SearchView, Vie
     }
 
     @Override
-    public void showProgress() {
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideProgress() {
-        progressBar.setVisibility(View.GONE);
+    public void initSearchRecycler() {
+        recyclerView = (RecyclerView) findViewById(R.id.rv_History);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        List<Repositories> historyList = new Select(Repositories_Table.user_name, Repositories_Table.owner_type, Repositories_Table.request_time)
+                .distinct()
+                .from(Repositories.class)
+                .where()
+                .queryList();
+        adapter = new ListHistory(this, historyList);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
     public void onClick(View v) {
-        presenter.validateCredentials();
+        if (TextUtils.isEmpty(username.getText())) {
+            setUsernameError();
+        } else {
+            presenter.validateCredentials();
+        }
     }
 
     public String getType(Spinner type) {

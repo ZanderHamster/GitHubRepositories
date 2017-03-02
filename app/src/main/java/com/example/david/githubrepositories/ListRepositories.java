@@ -10,13 +10,14 @@ import android.widget.TextView;
 import com.example.david.githubrepositories.Database.Repositories;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListRepositories extends RecyclerView.Adapter<ListRepositories.RepoViewHolder>{
     private List<Repositories> repositoriesList;
 
     public ListRepositories(List<Repositories> repositoriesList) {
-        this.repositoriesList=repositoriesList;
+        this.repositoriesList= repositoriesList == null ? new ArrayList<>() : repositoriesList;
     }
 
     @Override
@@ -62,5 +63,11 @@ public class ListRepositories extends RecyclerView.Adapter<ListRepositories.Repo
             this.stargazers_count= (TextView) itemView.findViewById(R.id.tv_stargazers_count);
             this.language= (TextView) itemView.findViewById(R.id.tv_language);
         }
+    }
+
+    public void setRepositories(List<Repositories> repositories){
+        repositoriesList.clear();
+        repositoriesList.addAll(repositories);
+        notifyDataSetChanged();
     }
 }
