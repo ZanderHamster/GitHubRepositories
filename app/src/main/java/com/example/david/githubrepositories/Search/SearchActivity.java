@@ -9,12 +9,11 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.example.david.githubrepositories.Database.Repositories;
 import com.example.david.githubrepositories.Database.Repositories_Table;
-import com.example.david.githubrepositories.ListHistory;
+import com.example.david.githubrepositories.ListHistoryAdapter;
 import com.example.david.githubrepositories.R;
 import com.example.david.githubrepositories.Result.ResultActivity;
 import com.raizlabs.android.dbflow.sql.language.Select;
@@ -22,27 +21,21 @@ import com.raizlabs.android.dbflow.sql.language.Select;
 import java.util.List;
 
 public class SearchActivity extends AppCompatActivity implements SearchView, View.OnClickListener {
-    public ProgressBar progressBar;
     public EditText username;
-    public Spinner type;
+    public Spinner owner;
     private SearchPresenter presenter;
-    private  RecyclerView recyclerView;
-    private ListHistory adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        progressBar = (ProgressBar) findViewById(R.id.progress);
         username = (EditText) findViewById(R.id.etUserName);
-        type = (Spinner) findViewById(R.id.spinner);
+        owner = (Spinner) findViewById(R.id.spinner);
         findViewById(R.id.bSearch).setOnClickListener(this);
 
         presenter = new SearchPresenterImpl(this);
         presenter.takeListHistory();
-
-
     }
 
 
@@ -55,20 +48,20 @@ public class SearchActivity extends AppCompatActivity implements SearchView, Vie
     public void navigateToResult() {
         Intent intent = new Intent(this, ResultActivity.class);
         intent.putExtra("userName", username.getText().toString());
-        intent.putExtra("ownerType", getType(type));
+        intent.putExtra("ownerType", getType(owner));
         startActivity(intent);
     }
 
     @Override
     public void initSearchRecycler() {
-        recyclerView = (RecyclerView) findViewById(R.id.rv_History);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_History);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         List<Repositories> historyList = new Select(Repositories_Table.user_name, Repositories_Table.owner_type, Repositories_Table.request_time)
                 .distinct()
                 .from(Repositories.class)
                 .where()
                 .queryList();
-        adapter = new ListHistory(this, historyList);
+        ListHistoryAdapter adapter = new ListHistoryAdapter(this, historyList);
         recyclerView.setAdapter(adapter);
     }
 

@@ -13,7 +13,7 @@ import retrofit2.http.Query;
 
 public class GitHubServiceImpl implements GitHubService {
     @Override
-    public Observable<List<Repositories>> getRepo(@Path("user") final String user, @Query("type") final String owner) {
+    public Observable<List<Repositories>> getRepo(@Path("user") final String user, @Query("owner") final String owner) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.github.com/")

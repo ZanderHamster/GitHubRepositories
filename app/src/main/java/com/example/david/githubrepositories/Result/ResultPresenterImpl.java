@@ -1,7 +1,6 @@
 package com.example.david.githubrepositories.Result;
 
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.david.githubrepositories.Database.Repositories;
@@ -28,7 +27,6 @@ class ResultPresenterImpl implements ResultPresenter {
 
     @Override
     public void takeListRepositories(String username, String owner) {
-        resultView.showProgress();
         resultView.initResultRecycler();
 
         List<Repositories> currentRequest = new Select()
@@ -38,17 +36,16 @@ class ResultPresenterImpl implements ResultPresenter {
 
         if (currentRequest.isEmpty()) {
             makeRequest(username, owner);
-            updateList(username, owner);
+            resultView.refreshListRepositories(getRepositoriesList(username, owner));
         } else {
             Date requestTime = currentRequest.get(currentRequest.size() - 1).getRequest_time();
             Date currentTime = Calendar.getInstance().getTime();
             long timeDiff = currentTime.getTime() - requestTime.getTime();
             if ((timeDiff / 60000) > 5) {
                 makeRequest(username, owner);
-                updateList(username, owner);
+                resultView.refreshListRepositories(getRepositoriesList(username, owner));
             } else {
-                updateList(username, owner);
-                resultView.hideProgress();
+                resultView.refreshListRepositories(getRepositoriesList(username, owner));
             }
         }
     }
@@ -83,10 +80,6 @@ class ResultPresenterImpl implements ResultPresenter {
                 .queryList();
     }
 
-    private void updateList(String username, String owner) {
-        resultView.updateList(getRepositoriesList(username, owner));
-    }
-
     private void makeRequest(final String username, final String owner) {
         GitHubServiceImpl gitHubService = new GitHubServiceImpl();
         gitHubService.getRepo(username, owner)
@@ -95,24 +88,21 @@ class ResultPresenterImpl implements ResultPresenter {
                 .subscribe(new Observer<List<Repositories>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        Log.d("LOG", "onSubscribe");
+                        resultView.showProgress();
                     }
 
                     @Override
                     public void onNext(List<Repositories> repositories) {
-                        Log.d("LOG", "onNext");
                         loadToDataBase(repositories, username, owner);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d("LOG", e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-                        Log.d("LOG", "Complete");
-                        updateList(username, owner);
+                        resultView.refreshListRepositories(getRepositoriesList(username, owner));
                         resultView.hideProgress();
                     }
                 });

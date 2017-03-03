@@ -2,33 +2,28 @@ package com.example.david.githubrepositories.Result;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import com.example.david.githubrepositories.Database.Repositories;
-import com.example.david.githubrepositories.Database.Repositories_Table;
-import com.example.david.githubrepositories.ListRepositories;
+import com.example.david.githubrepositories.ListRepositoriesAdapter;
 import com.example.david.githubrepositories.R;
 import com.example.david.githubrepositories.Search.SearchActivity;
-import com.raizlabs.android.dbflow.sql.language.Select;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResultActivity extends AppCompatActivity implements ResultView {
-    private List<Repositories> repositoriesList;
-    private RecyclerView recyclerView;
     private String userName;
     private String ownerType;
     private ProgressBar progressBar;
-    private ListRepositories adapter;
+    private ListRepositoriesAdapter adapter;
 
 
     @Override
@@ -37,18 +32,17 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         setContentView(R.layout.activity_result);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         progressBar = (ProgressBar) findViewById(R.id.progress);
-        adapter = new ListRepositories(repositoriesList);
+        adapter = new ListRepositoriesAdapter(new ArrayList<>());
 
         ResultPresenter presenter = new ResultPresenterImpl(this);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
-        userName = intent.getStringExtra("userName");
-        ownerType = intent.getStringExtra("ownerType");
+        userName = getIntent().getStringExtra("userName");
+        ownerType = getIntent().getStringExtra("ownerType");
 
-        presenter.takeListRepositories(userName,ownerType);
+        presenter.takeListRepositories(userName, ownerType);
     }
 
     @Override
@@ -66,67 +60,23 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
                 startActivity(intent);
                 return true;
             case R.id.name_ascending:
-                nameAscending();
+                adapter.sortNameAscending(userName, ownerType);
                 break;
             case R.id.name_descending:
-                nameDescending();
+                adapter.sortNameDescending(userName, ownerType);
                 break;
             case R.id.date_ascending:
-                dateAscending();
+                adapter.sortDateAscending(userName, ownerType);
                 break;
             case R.id.date_descending:
-                dateDescending();
+                adapter.sortDateDescending(userName, ownerType);
                 break;
         }
         return true;
     }
 
-    public void nameDescending() {
-        if (!TextUtils.isEmpty(ownerType) && !TextUtils.isEmpty(userName)) {
-            repositoriesList = new Select()
-                    .from(Repositories.class)
-                    .where(Repositories_Table.user_name.is(userName), Repositories_Table.owner_type.is(ownerType))
-                    .orderBy(Repositories_Table.name, false)
-                    .queryList();
-            updateList(repositoriesList);
-        }
-    }
-
-    public void nameAscending() {
-        if (!TextUtils.isEmpty(ownerType) && !TextUtils.isEmpty(userName)) {
-            repositoriesList = new Select()
-                    .from(Repositories.class)
-                    .where(Repositories_Table.user_name.is(userName), Repositories_Table.owner_type.is(ownerType))
-                    .orderBy(Repositories_Table.name, true)
-                    .queryList();
-            updateList(repositoriesList);
-        }
-    }
-
-    public void dateAscending() {
-        if (!TextUtils.isEmpty(ownerType) && !TextUtils.isEmpty(userName)) {
-            repositoriesList = new Select()
-                    .from(Repositories.class)
-                    .where(Repositories_Table.user_name.is(userName), Repositories_Table.owner_type.is(ownerType))
-                    .orderBy(Repositories_Table.created_at, true)
-                    .queryList();
-            updateList(repositoriesList);
-        }
-    }
-
-    public void dateDescending() {
-        if (!TextUtils.isEmpty(ownerType) && !TextUtils.isEmpty(userName)) {
-            repositoriesList = new Select()
-                    .from(Repositories.class)
-                    .where(Repositories_Table.user_name.is(userName), Repositories_Table.owner_type.is(ownerType))
-                    .orderBy(Repositories_Table.created_at, false)
-                    .queryList();
-            updateList(repositoriesList);
-        }
-    }
-
     @Override
-    public void updateList(List<Repositories> repositoriesList) {
+    public void refreshListRepositories(List<Repositories> repositoriesList) {
         adapter.setRepositories(repositoriesList);
     }
 
@@ -142,7 +92,7 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
 
     @Override
     public void initResultRecycler() {
-        recyclerView = (RecyclerView) findViewById(R.id.rvRepositories);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvRepositories);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }

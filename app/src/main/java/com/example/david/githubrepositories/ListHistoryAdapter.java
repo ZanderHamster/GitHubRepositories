@@ -13,11 +13,11 @@ import com.example.david.githubrepositories.Result.ResultActivity;
 
 import java.util.List;
 
-public class ListHistory extends RecyclerView.Adapter<ListHistory.HistoryViewHolder> {
+public class ListHistoryAdapter extends RecyclerView.Adapter<ListHistoryAdapter.HistoryViewHolder> {
     private List<Repositories> historyList;
     private Context context;
 
-    public ListHistory(Context context, List<Repositories> historyList) {
+    public ListHistoryAdapter(Context context, List<Repositories> historyList) {
         this.historyList = historyList;
         this.context = context;
     }
@@ -35,14 +35,11 @@ public class ListHistory extends RecyclerView.Adapter<ListHistory.HistoryViewHol
         holder.name.setText("Пользователь: " + historyItem.getUser_name());
         holder.type.setText("Тип: " + historyItem.getOwner_type());
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, ResultActivity.class);
-                intent.putExtra("userName", historyItem.getUser_name());
-                intent.putExtra("ownerType", historyItem.getOwner_type());
-                context.startActivity(intent);
-            }
+        holder.itemView.setOnClickListener(view -> {
+            Intent intent = new Intent(context, ResultActivity.class);
+            intent.putExtra("userName", historyItem.getUser_name());
+            intent.putExtra("ownerType", historyItem.getOwner_type());
+            context.startActivity(intent);
         });
     }
 

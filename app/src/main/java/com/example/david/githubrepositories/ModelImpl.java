@@ -20,34 +20,34 @@
 //
 //public class ModelImpl implements Model {
 //    private String username;
-//    private String type;
+//    private String owner;
 //
-//    public ModelImpl(String username, String type) {
+//    public ModelImpl(String username, String owner) {
 //        this.username = username;
-//        this.type = type;
+//        this.owner = owner;
 //    }
 //
 //    @Override
 //    public List<Repositories> requestToGitHub() {
 //        if (TextUtils.isEmpty(username)) {
-//            return getRepositoriesList(username, type);
+//            return getRepositoriesList(username, owner);
 //        } else {
 //            List<Repositories> currentRequest = new Select()
 //                    .from(Repositories.class)
-//                    .where(Repositories_Table.user_name.is(username), Repositories_Table.owner_type.is(type))
+//                    .where(Repositories_Table.user_name.is(username), Repositories_Table.owner_type.is(owner))
 //                    .queryList();
 //            if (currentRequest.isEmpty()) {
 //                makeRequest();
-//                return getRepositoriesList(username, type);
+//                return getRepositoriesList(username, owner);
 //            } else {
 //                Date requestTime = currentRequest.get(currentRequest.size() - 1).getRequest_time();
 //                Date currentTime = Calendar.getInstance().getTime();
 //                long timeDiff = currentTime.getTime() - requestTime.getTime();
 //                if ((timeDiff / 60000) > 5) {
 //                    makeRequest();
-//                    return getRepositoriesList(username, type);
+//                    return getRepositoriesList(username, owner);
 //                } else {
-//                    return getRepositoriesList(username, type);
+//                    return getRepositoriesList(username, owner);
 //                }
 //            }
 //        }
@@ -56,7 +56,7 @@
 //
 //    public void makeRequest() {
 //        GitHubServiceImpl gitHubService = new GitHubServiceImpl();
-//        Observable<List<Repositories>> data = gitHubService.getRepo(username, type)
+//        Observable<List<Repositories>> data = gitHubService.getRepo(username, owner)
 //                .subscribeOn(Schedulers.newThread())
 //                .observeOn(AndroidSchedulers.mainThread());
 //        data.subscribe(new Observer<List<Repositories>>() {
@@ -81,7 +81,7 @@
 //                    repo.setStargazers_count(repositories.get(i).getStargazers_count());
 //                    repo.setRequest_time(currentTime);
 //                    repo.setUser_name(username);
-//                    repo.setOwner_type(type);
+//                    repo.setOwner_type(owner);
 //                    repo.save();
 //                }
 //                ClearingHistory();
@@ -123,10 +123,10 @@
 //        }
 //    }
 //
-//    private List<Repositories> getRepositoriesList(String username, String type) {
+//    private List<Repositories> getRepositoriesList(String username, String owner) {
 //        return new Select()
 //                .from(Repositories.class)
-//                .where(Repositories_Table.user_name.is(username), Repositories_Table.owner_type.is(type))
+//                .where(Repositories_Table.user_name.is(username), Repositories_Table.owner_type.is(owner))
 //                .queryList();
 //    }
 //}

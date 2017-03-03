@@ -5,7 +5,7 @@ import com.example.david.githubrepositories.Database.Repositories;
 import java.util.List;
 
 interface ResultView {
-    void updateList(List<Repositories> repositoriesList);
+    void refreshListRepositories(List<Repositories> repositoriesList);
 
     void showProgress();
 
