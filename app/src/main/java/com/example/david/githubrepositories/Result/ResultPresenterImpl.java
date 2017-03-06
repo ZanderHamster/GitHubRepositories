@@ -1,11 +1,10 @@
 package com.example.david.githubrepositories.Result;
 
-import android.support.annotation.NonNull;
-import android.util.Log;
-
 import com.example.david.githubrepositories.Database.Repositories;
 import com.example.david.githubrepositories.Database.Repositories_Table;
 import com.example.david.githubrepositories.GitHubServiceImpl;
+import com.example.david.githubrepositories.Model;
+import com.example.david.githubrepositories.ModelImpl;
 import com.raizlabs.android.dbflow.sql.language.Method;
 import com.raizlabs.android.dbflow.sql.language.Select;
 
@@ -20,9 +19,11 @@ import io.reactivex.schedulers.Schedulers;
 
 class ResultPresenterImpl implements ResultPresenter {
     private ResultView resultView;
+    private Model model;
 
     ResultPresenterImpl(ResultView resultView) {
         this.resultView = resultView;
+        this.model = new ModelImpl();
     }
 
     @Override
@@ -36,16 +37,14 @@ class ResultPresenterImpl implements ResultPresenter {
 
         if (currentRequest.isEmpty()) {
             makeRequest(username, owner);
-            resultView.refreshListRepositories(getRepositoriesList(username, owner));
         } else {
             Date requestTime = currentRequest.get(currentRequest.size() - 1).getRequest_time();
             Date currentTime = Calendar.getInstance().getTime();
             long timeDiff = currentTime.getTime() - requestTime.getTime();
             if ((timeDiff / 60000) > 5) {
                 makeRequest(username, owner);
-                resultView.refreshListRepositories(getRepositoriesList(username, owner));
             } else {
-                resultView.refreshListRepositories(getRepositoriesList(username, owner));
+                resultView.refreshListRepositories(model.getRepositoriesList(username, owner));
             }
         }
     }
@@ -72,14 +71,6 @@ class ResultPresenterImpl implements ResultPresenter {
         }
     }
 
-    @NonNull
-    private List<Repositories> getRepositoriesList(String username, String owner) {
-        return new Select()
-                .from(Repositories.class)
-                .where(Repositories_Table.user_name.is(username), Repositories_Table.owner_type.is(owner))
-                .queryList();
-    }
-
     private void makeRequest(final String username, final String owner) {
         GitHubServiceImpl gitHubService = new GitHubServiceImpl();
         gitHubService.getRepo(username, owner)
@@ -93,7 +84,8 @@ class ResultPresenterImpl implements ResultPresenter {
 
                     @Override
                     public void onNext(List<Repositories> repositories) {
-                        loadToDataBase(repositories, username, owner);
+                        model.loadToDataBase(repositories, username, owner);
+                        ClearingHistory();
                     }
 
                     @Override
@@ -102,29 +94,9 @@ class ResultPresenterImpl implements ResultPresenter {
 
                     @Override
                     public void onComplete() {
-                        resultView.refreshListRepositories(getRepositoriesList(username, owner));
+                        resultView.refreshListRepositories(model.getRepositoriesList(username, owner));
                         resultView.hideProgress();
                     }
                 });
-    }
-
-    private void loadToDataBase(List<Repositories> repositories, String username, String owner) {
-        Date currentTime = Calendar.getInstance().getTime();
-        for (int i = 0; i < repositories.size(); i++) {
-            Log.d("LOG", repositories.get(i).getName());
-            Repositories repo = new Repositories();
-
-            repo.setName(repositories.get(i).getName());
-            repo.setDescription(repositories.get(i).getDescription());
-            repo.setCreated_at(repositories.get(i).getCreated_at());
-            repo.setUpdated_at(repositories.get(i).getUpdated_at());
-            repo.setLanguage(repositories.get(i).getLanguage());
-            repo.setStargazers_count(repositories.get(i).getStargazers_count());
-            repo.setRequest_time(currentTime);
-            repo.setUser_name(username);
-            repo.setOwner_type(owner);
-            repo.save();
-        }
-        ClearingHistory();
     }
 }

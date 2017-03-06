@@ -11,7 +11,7 @@
     tools:context="com.example.david.githubrepositories.Search.SearchActivity">
 
     <Button
-        android:text="Поиск"
+        android:text="@string/Search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:hint="@string/user_name"
+        android:digits="@string/english_alphavite"
         android:ems="10"
         android:id="@+id/etUserName"
         android:layout_alignParentTop="true"
