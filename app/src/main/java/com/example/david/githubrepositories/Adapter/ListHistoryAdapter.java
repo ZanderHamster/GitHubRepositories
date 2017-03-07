@@ -1,4 +1,4 @@
-package com.example.david.githubrepositories;
+package com.example.david.githubrepositories.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.david.githubrepositories.Database.Repositories;
+import com.example.david.githubrepositories.R;
 import com.example.david.githubrepositories.Result.ResultActivity;
 
 import java.util.List;

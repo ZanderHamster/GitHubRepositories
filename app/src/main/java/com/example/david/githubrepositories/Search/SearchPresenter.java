@@ -1,7 +1,21 @@
 package com.example.david.githubrepositories.Search;
 
-public interface SearchPresenter {
-    void validateCredentials();
+class SearchPresenter implements ISearchPresenter {
+    private ISearchView searchView;
 
-    void takeListHistory();
+    SearchPresenter(ISearchView searchView) {
+        this.searchView = searchView;
+    }
+
+    @Override
+    public void validateCredentials() {
+        searchView.navigateToResult();
+    }
+
+    @Override
+    public void takeListHistory() {
+        searchView.initSearchRecycler();
+    }
 }
+
+

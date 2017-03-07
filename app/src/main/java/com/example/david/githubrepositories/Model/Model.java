@@ -1,4 +1,4 @@
-package com.example.david.githubrepositories;
+package com.example.david.githubrepositories.Model;
 
 import com.example.david.githubrepositories.Database.Repositories;
 import com.example.david.githubrepositories.Database.Repositories_Table;
@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class ModelImpl implements Model {
+public class Model implements IModel {
     @Override
     public void loadToDataBase(List<Repositories> repositories, String username, String owner) {
         Date currentTime = Calendar.getInstance().getTime();

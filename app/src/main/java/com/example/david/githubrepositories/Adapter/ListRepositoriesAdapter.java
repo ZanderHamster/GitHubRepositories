@@ -1,4 +1,4 @@
-package com.example.david.githubrepositories;
+package com.example.david.githubrepositories.Adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.example.david.githubrepositories.Database.Repositories;
 import com.example.david.githubrepositories.Database.Repositories_Table;
+import com.example.david.githubrepositories.R;
 import com.raizlabs.android.dbflow.sql.language.Select;
 
 import java.text.SimpleDateFormat;

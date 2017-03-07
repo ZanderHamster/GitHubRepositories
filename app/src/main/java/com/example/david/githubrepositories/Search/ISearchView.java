@@ -1,6 +1,6 @@
 package com.example.david.githubrepositories.Search;
 
-interface SearchView {
+interface ISearchView {
 
     void setUsernameError();
 

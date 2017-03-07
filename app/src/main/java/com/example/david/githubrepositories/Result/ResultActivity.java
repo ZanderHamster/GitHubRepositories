@@ -12,14 +12,14 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.example.david.githubrepositories.Database.Repositories;
-import com.example.david.githubrepositories.ListRepositoriesAdapter;
+import com.example.david.githubrepositories.Adapter.ListRepositoriesAdapter;
 import com.example.david.githubrepositories.R;
 import com.example.david.githubrepositories.Search.SearchActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResultActivity extends AppCompatActivity implements ResultView {
+public class ResultActivity extends AppCompatActivity implements IResultView {
     private String userName;
     private String ownerType;
     private ProgressBar progressBar;
@@ -34,7 +34,7 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         progressBar = (ProgressBar) findViewById(R.id.progress);
         adapter = new ListRepositoriesAdapter(new ArrayList<>());
 
-        ResultPresenter presenter = new ResultPresenterImpl(this);
+        IResultPresenter presenter = new ResultPresenter(this);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

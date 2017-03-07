@@ -13,17 +13,17 @@ import android.widget.Spinner;
 
 import com.example.david.githubrepositories.Database.Repositories;
 import com.example.david.githubrepositories.Database.Repositories_Table;
-import com.example.david.githubrepositories.ListHistoryAdapter;
+import com.example.david.githubrepositories.Adapter.ListHistoryAdapter;
 import com.example.david.githubrepositories.R;
 import com.example.david.githubrepositories.Result.ResultActivity;
 import com.raizlabs.android.dbflow.sql.language.Select;
 
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity implements SearchView, View.OnClickListener {
+public class SearchActivity extends AppCompatActivity implements ISearchView, View.OnClickListener {
     public EditText username;
     public Spinner owner;
-    private SearchPresenter presenter;
+    private ISearchPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView, Vie
         owner = (Spinner) findViewById(R.id.spinner);
         findViewById(R.id.bSearch).setOnClickListener(this);
 
-        presenter = new SearchPresenterImpl(this);
+        presenter = new SearchPresenter(this);
         presenter.takeListHistory();
     }
 
