@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.david.githubrepositories.Database.Repositories;
 import com.example.david.githubrepositories.Adapter.ListRepositoriesAdapter;
@@ -37,7 +38,9 @@ public class ResultActivity extends AppCompatActivity implements IResultView {
         IResultPresenter presenter = new ResultPresenter(this);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar()!= null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         userName = getIntent().getStringExtra("userName");
         ownerType = getIntent().getStringExtra("ownerType");
@@ -95,5 +98,14 @@ public class ResultActivity extends AppCompatActivity implements IResultView {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvRepositories);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void requestError() {
+        Toast.makeText(this, R.string.error,Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this,SearchActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
     }
 }

@@ -1,5 +1,8 @@
 package com.example.david.githubrepositories.Result;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import com.example.david.githubrepositories.Database.Repositories;
 import com.example.david.githubrepositories.Database.Repositories_Table;
 import com.example.david.githubrepositories.GitHubService;
@@ -49,27 +52,6 @@ class ResultPresenter implements IResultPresenter {
         }
     }
 
-    private void ClearingHistory() {
-        List<Repositories> uniqueUsers = new Select(Repositories_Table.user_name, Repositories_Table.owner_type, Repositories_Table.request_time)
-                .distinct()
-                .from(Repositories.class)
-                .where()
-                .queryList();
-
-        if (uniqueUsers.size() > 2) {
-            Repositories oldestRequestTime = new Select(Method.min(Repositories_Table.request_time), Repositories_Table.request_time)
-                    .from(Repositories.class)
-                    .where()
-                    .querySingle();
-            List<Repositories> forDelete = new Select()
-                    .from(Repositories.class)
-                    .where(Repositories_Table.request_time.is(oldestRequestTime != null ? oldestRequestTime.getRequest_time() : null))
-                    .queryList();
-            for (int i = 0; i < forDelete.size(); i++) {
-                forDelete.get(i).delete();
-            }
-        }
-    }
 
     private void makeRequest(final String username, final String owner) {
         GitHubService gitHubService = new GitHubService();
@@ -85,11 +67,13 @@ class ResultPresenter implements IResultPresenter {
                     @Override
                     public void onNext(List<Repositories> repositories) {
                         IModel.loadToDataBase(repositories, username, owner);
-                        ClearingHistory();
+                        IModel.ClearingHistory();
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        resultView.hideProgress();
+                        resultView.requestError();
                     }
 
                     @Override

@@ -6,6 +6,7 @@
     <string name="repository_list">Список репозиториев</string>
     <string name="english_alphavite">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</string>
     <string name="Search">Поиск</string>
+    <string name="error">Ошибка</string>
     <string-array name="repoType">
         <item>"Все"</item>
         <item>"Пользователь владелец"</item>

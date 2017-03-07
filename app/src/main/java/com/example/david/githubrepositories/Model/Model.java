@@ -2,6 +2,7 @@ package com.example.david.githubrepositories.Model;
 
 import com.example.david.githubrepositories.Database.Repositories;
 import com.example.david.githubrepositories.Database.Repositories_Table;
+import com.raizlabs.android.dbflow.sql.language.Method;
 import com.raizlabs.android.dbflow.sql.language.Select;
 
 import java.util.Calendar;
@@ -34,5 +35,28 @@ public class Model implements IModel {
                 .from(Repositories.class)
                 .where(Repositories_Table.user_name.is(username), Repositories_Table.owner_type.is(owner))
                 .queryList();
+    }
+
+    @Override
+    public void ClearingHistory() {
+        List<Repositories> uniqueUsers = new Select(Repositories_Table.user_name, Repositories_Table.owner_type, Repositories_Table.request_time)
+                .distinct()
+                .from(Repositories.class)
+                .where()
+                .queryList();
+
+        if (uniqueUsers.size() > 2) {
+            Repositories oldestRequestTime = new Select(Method.min(Repositories_Table.request_time), Repositories_Table.request_time)
+                    .from(Repositories.class)
+                    .where()
+                    .querySingle();
+            List<Repositories> forDelete = new Select()
+                    .from(Repositories.class)
+                    .where(Repositories_Table.request_time.is(oldestRequestTime != null ? oldestRequestTime.getRequest_time() : null))
+                    .queryList();
+            for (int i = 0; i < forDelete.size(); i++) {
+                forDelete.get(i).delete();
+            }
+        }
     }
 }

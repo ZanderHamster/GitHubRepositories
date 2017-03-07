@@ -12,4 +12,6 @@ interface IResultView {
     void hideProgress();
 
     void initResultRecycler();
+
+    void requestError();
 }

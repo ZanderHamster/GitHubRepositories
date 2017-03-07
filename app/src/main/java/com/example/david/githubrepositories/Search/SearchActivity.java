@@ -46,9 +46,10 @@ public class SearchActivity extends AppCompatActivity implements ISearchView, Vi
 
     @Override
     public void navigateToResult() {
-        Intent intent = new Intent(this, ResultActivity.class);
-        intent.putExtra("userName", username.getText().toString());
-        intent.putExtra("ownerType", getType(owner));
+        Intent intent = new Intent(this, ResultActivity.class)
+                .putExtra("userName", username.getText().toString())
+                .putExtra("ownerType", getType(owner))
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
